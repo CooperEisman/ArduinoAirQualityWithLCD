@@ -1,6 +1,6 @@
 #include <LiquidCrystal.h>
 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);      // Params: (rs, enable, d4, d5, d6, d7)
+LiquidCrystal lcd(3,4,5,6,7,8,9,10,11,12,13);      // Params: (rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7)
 
 int air;                                    //Value for Air Quality: 0-63
 int filter;                                 //Value for Filter Quality: 0-63
