@@ -7,6 +7,8 @@
 #include <SoftwareSerial.h>                                 //Serialization Library
 
 LiquidCrystal lcd(3,4,5,6,7,8,9,10,11,12,13);               // Params: (rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7)
+SoftwareSerial pmSerial(2, 0);                              //Creates a Serial w/ Input Pin 2 and Output pin 0
+Adafruit_PM25AQI aqi = Adafruit_PM25AQI();                  //New Instance of Adafruit Tech
 
 int air;                                                    //Value for Air Quality: 0-63
 int filter;                                                 //Value for Filter Quality: 0-63
@@ -14,6 +16,20 @@ int state;                                                  //Value for State of
 
 void setup() {                                              //Function for Setup. Default Call
   lcd.begin(16,2);                                          //Sets up with 16 Colums and 2 Rows
+
+  Serial.begin(9600);                                       // Wait for serial monitor to open at 9600 Baud
+  while (!Serial) delay(10);
+
+  Serial.println("Adafruit PMSA003I Air Quality Sensor");   //Print When Discovered
+  delay(1000);                                              //Wait one second for sensor to boot up
+  pmSerial.begin(9600);                                     //Software Serial w/ Baudrate of 9600
+
+  if (! aqi.begin_UART(&pmSerial)) {                        // connect to the sensor over software serial 
+    Serial.println("Could not find PM 2.5 sensor!");
+    while (1) delay(10);
+  }
+
+  Serial.println("PM25 found!");                            //Print when Device Communication is Set Up
   
   air = 13;                                                 //Initial Value for Air Quality
   filter = 44;                                              //Initial Value for Filter Quality
