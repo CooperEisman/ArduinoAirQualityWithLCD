@@ -43,6 +43,16 @@ void setup() {                                              //Function for Setup
 void loop() {                                               //Loop Function, Defualt Call
   updateDisplay();                                          //Calls to Update Display.
   delay(5000);                                              //Delay 5000 millis (5 Seconds) before loop.
+
+  PM25_AQI_Data data;                                       //New Datastream
+  
+  if (! aqi.read(&data)) {                                  //Test if AQI Stream is Being Read Properly
+    Serial.println("Could not read from AQI");              //When Failed, Print This
+    delay(500);                                             //Try again in 500 Millis (1/2 Second)
+    return;
+  }
+
+  
 }
 
 void updateDisplay() {                                      //Function to update display with pertinent information. Called from loop()
@@ -103,4 +113,9 @@ void twoLinePrint(String one, String two) {                 //Function to hellp 
         lcd.print(one);                                     //Prints Line One
         lcd.setCursor(0, 1);                                //Sets Cursor to Begining of Second Lines
         lcd.print(two);                                     //Prints Line Two
+}
+
+void updateData() {
+  air = 10;
+  filter = 10;
 }
