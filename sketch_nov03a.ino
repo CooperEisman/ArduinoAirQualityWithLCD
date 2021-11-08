@@ -27,10 +27,7 @@ void updateDisplay() {                      //Function to update display with pe
   lcd.clear();                              // Clears the LCD screen
   if (state == 0) {                         //If statement, determines which data to display
     state = 1;                              //Switch State next Cycle;
-    lcd.setCursor(0, 0);                    //Sets Cursor to Begining of First Line
-    lcd.print("Air Quality:");              //Prints Title
-    lcd.setCursor(0, 1);                    //Sets Cursor to Begining of Second Lines
-    printValue(air);                        //Calls printValue() to print graphical view.
+    twoLinePrint("Air Quality:", printValue(air));
     
    } else if(state == 1) {
     if(air <= 15 || filter <= 15) {         //If Values Reach an Extreme, next screen will be the status screen.
@@ -38,11 +35,8 @@ void updateDisplay() {                      //Function to update display with pe
     } else {
       state = 0;                            //Switch State to Air Quality View Next Cycle
      }
-    
-    lcd.setCursor(0, 0);                    //Sets Cursor to Begining of First Line
-    lcd.print("Filter Quality:");           //Prints Title
-    lcd.setCursor(0, 1);                    //Sets Cursor to Begining of Second Lines
-    printValue(filter);                     //Calls printValue() to print graphical view.
+
+    twoLinePrint("Filter Quality:", printValue(filter));
     
    } else {                                 //Status View
       state = 0;                            //Switch State to Air Quality View Next Cycle
@@ -59,26 +53,27 @@ void updateDisplay() {                      //Function to update display with pe
    }
 }
 
-void printValue(int value) {                //Prints Values for Input with Graphical Output
-  lcd.print("Good ");                       //Left Label Text
+String printValue(int value) {              //Prints Values for Input with Graphical Output
+  String out = "Good ";                     //Initialize Output, Set Left Label Text
 
   if(value == 63) {                         //If Statments for Each Value. Value can be between 0-63, inclusive
-    lcd.print("######");
+    out+= "######";
   } else if(value > 31) {
-     lcd.print("-#####");
+     out+= "-#####";
   } else if(value >15) {
-     lcd.print("--####");
+     out+= "--####";
   } else if(value > 7) {
-     lcd.print("---###");
+     out+= "---###";
   } else if(value > 3) {
-     lcd.print("----##");
+     out+= "----##";
   } else if(value > 1){
-     lcd.print("-----#");
+     out+= "-----#";
   } else {
-     lcd.print("------");
+     out+= "------";
   }      
 
-  lcd.print(" Poor");                       //Right Label Text
+  out+= " Poor";                          //Appends Right Label Text
+  return out;
 }
 
 void twoLinePrint(String one, String two) { //Function to hellp eliminate clutter
