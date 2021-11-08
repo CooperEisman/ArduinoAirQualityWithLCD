@@ -9,8 +9,8 @@ int state;                                  //Value for State of Display... 0 fo
 void setup() {                              //Function for Setup. Default Call
   lcd.begin(16,2);                          //Sets up with 16 Colums and 2 Rows
   
-  air = 23;                                  //Initial Value for Air Quality
-  filter = 44;                               //Initial Value for Filter Quality
+  air = 23;                                 //Initial Value for Air Quality
+  filter = 44;                              //Initial Value for Filter Quality
   state = 0;                                //Initial State
   updateDisplay();                          //Call Function to Update the Display. Initializes the system.
   while(1==1) {
@@ -45,22 +45,16 @@ void updateDisplay() {                      //Function to update display with pe
     printValue(filter);                     //Calls printValue() to print graphical view.
     
    } else {                                 //Status View
-      state = 0;                                //Switch State to Air Quality View Next Cycle
+      state = 0;                            //Switch State to Air Quality View Next Cycle
       if(air <= 15 && filter <= 15) {       //If Both Air and Filter are in bad shape
-        lcd.setCursor(0, 0);                //Sets Cursor to Begining of First Line
-        lcd.print("Poor Air Quality");      //Prints
-        lcd.setCursor(0, 1);                //Sets Cursor to Begining of Second Lines
-        lcd.print("Replace Filter");        //Prints.
+        
+        twoLinePrint("Poor Air Quality", "Replace Filter");
+        
       } else if(air <= 15) {                //If it is just Air Quality
-        lcd.setCursor(0, 0);                //Sets Cursor to Begining of First Line
-        lcd.print("Extremely Poor");        //Prints
-        lcd.setCursor(0, 1);                //Sets Cursor to Begining of Second Lines
-        lcd.print("Air Quality");           //Prints.
+        twoLinePrint("Extremely Poor", "Air Quality");
+        
        } else {                             //If it is just the Filter Quality
-        lcd.setCursor(0, 0);                //Sets Cursor to Begining of First Line
-        lcd.print("Filter Degraded");       //Prints
-        lcd.setCursor(0, 1);                //Sets Cursor to Begining of Second Lines
-        lcd.print("Replace Soon");          //Prints.
+        twoLinePrint("Filter Degraded", "Replace Soon");
        }
    }
 }
@@ -85,4 +79,11 @@ void printValue(int value) {                //Prints Values for Input with Graph
   }      
 
   lcd.print(" Poor");                       //Right Label Text
+}
+
+void twoLinePrint(String one, String two) { //Function to hellp eliminate clutter
+        lcd.setCursor(0, 0);                //Sets Cursor to Begining of First Line
+        lcd.print(one);                     //Prints Line One
+        lcd.setCursor(0, 1);                //Sets Cursor to Begining of Second Lines
+        lcd.print(two);                     //Prints Line Two
 }
