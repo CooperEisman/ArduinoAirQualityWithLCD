@@ -1,55 +1,41 @@
-#include <Adafruit_PM25AQI.h>
-
+#include <Adafruit_PM25AQI.h>                               //Adafruit Libs
 #include <Adafruit_BusIO_Register.h>
 #include <Adafruit_I2CDevice.h>
 #include <Adafruit_I2CRegister.h>
 #include <Adafruit_SPIDevice.h>
-#include <SoftwareSerial.h>
+#include <SoftwareSerial.h>                                 //Serialization Library
 
+SoftwareSerial pmSerial(2, 0);                              //Creates a Serial w/ Input Pin 2 and Output pin 0
 
-/* Test sketch for Adafruit PM2.5 sensor with UART or I2C */
-
-// If your PM2.5 is UART only, for UNO and others (without hardware serial) 
-// we must use software serial...
-// pin #2 is IN from sensor (TX pin on sensor), leave pin #3 disconnected
-// comment these two lines if using hardware serial
-//#include <SoftwareSerial.h>
-SoftwareSerial pmSerial(2, 0);
-
-Adafruit_PM25AQI aqi = Adafruit_PM25AQI();
+Adafruit_PM25AQI aqi = Adafruit_PM25AQI();                  //New Instance of Adafruit Tech
 
 void setup() {
-  // Wait for serial monitor to open
-  Serial.begin(9600);
+  Serial.begin(9600);                                       // Wait for serial monitor to open at 9600 Baud
   while (!Serial) delay(10);
 
-  Serial.println("Adafruit PMSA003I Air Quality Sensor");
+  Serial.println("Adafruit PMSA003I Air Quality Sensor");   //Print When Discovered
+  delay(1000);                                              //Wait one second for sensor to boot up
+  pmSerial.begin(9600);                                     //Software Serial w/ Baudrate of 9600
 
-  // Wait one second for sensor to boot up!
-  delay(1000);
-
-  // If using serial, initialize it and set baudrate before starting!
-  pmSerial.begin(9600);
-
-  // There are 3 options for connectivity!
-  //if (! aqi.begin_UART(&Serial1)) { // connect to the sensor over hardware serial
-  if (! aqi.begin_UART(&pmSerial)) { // connect to the sensor over software serial 
+  if (! aqi.begin_UART(&pmSerial)) {                        // connect to the sensor over software serial 
     Serial.println("Could not find PM 2.5 sensor!");
     while (1) delay(10);
   }
 
-  Serial.println("PM25 found!");
+  Serial.println("PM25 found!");                            //Print when Device Communication is Set Up
 }
 
 void loop() {
-  PM25_AQI_Data data;
+  PM25_AQI_Data data;                                       //New Datastream
   
-  if (! aqi.read(&data)) {
-    Serial.println("Could not read from AQI");
-    delay(500);  // try again in a bit!
+  if (! aqi.read(&data)) {                                  //Test if AQI Stream is Being Read Properly
+    Serial.println("Could not read from AQI");              //When Failed, Print This
+    delay(500);                                             //Try again in 500 Millis (1/2 Second)
     return;
   }
-  Serial.println("AQI reading success");
+  Serial.println("AQI reading success");                    //Print when Expected
+
+  //Following Is Output Sequence                            <----------------------------
 
   Serial.println();
   Serial.println(F("---------------------------------------"));
