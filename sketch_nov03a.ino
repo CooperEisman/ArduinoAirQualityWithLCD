@@ -9,7 +9,7 @@ int state;                                  //Value for State of Display... 0 fo
 void setup() {                              //Function for Setup. Default Call
   lcd.begin(16,2);                          //Sets up with 16 Colums and 2 Rows
   
-  air = 23;                                 //Initial Value for Air Quality
+  air = 13;                                 //Initial Value for Air Quality
   filter = 44;                              //Initial Value for Filter Quality
   state = 0;                                //Initial State
   updateDisplay();                          //Call Function to Update the Display. Initializes the system.
@@ -72,7 +72,7 @@ String printValue(int value) {              //Prints Values for Input with Graph
      out+= "------";
   }      
 
-  out+= " Poor";                          //Appends Right Label Text
+  out+= " Poor";                            //Appends Right Label Text
   return out;
 }
 
