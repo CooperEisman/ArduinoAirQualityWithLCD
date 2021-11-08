@@ -51,6 +51,7 @@ void loop() {                                               //Loop Function, Def
     delay(500);                                             //Try again in 500 Millis (1/2 Second)
     return;
   }
+  updateData(data);                                         //Updata Air and Filter vars When Data can be read
 
   
 }
@@ -88,17 +89,17 @@ void updateDisplay() {                                      //Function to update
 String printValue(int value) {                              //Prints Values for Input with Graphical Output
   String out = "Good ";                                     //Initialize Output, Set Left Label Text
 
-  if(value == 63) {                                         //If Statments for Each Value. Value can be between 0-63, inclusive
+  if(value > 60) {                                         //If Statments for Each Value. Value can be between 0-63, inclusive
     out+= "######";
-  } else if(value > 31) {
+  } else if(value > 50) {
      out+= "-#####";
-  } else if(value >15) {
+  } else if(value >40) {
      out+= "--####";
-  } else if(value > 7) {
+  } else if(value > 30) {
      out+= "---###";
-  } else if(value > 3) {
+  } else if(value > 20) {
      out+= "----##";
-  } else if(value > 1){
+  } else if(value > 10){
      out+= "-----#";
   } else {
      out+= "------";
@@ -115,7 +116,7 @@ void twoLinePrint(String one, String two) {                 //Function to hellp 
         lcd.print(two);                                     //Prints Line Two
 }
 
-void updateData() {
+void updateData(PM25_AQI_Data data) {
   air = 10;
   filter = 10;
 }
