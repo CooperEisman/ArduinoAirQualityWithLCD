@@ -9,6 +9,9 @@
 LiquidCrystal lcd(3,4,5,6,7,8,9,10,11,12,13);               // Params: (rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7)
 SoftwareSerial pmSerial(2, 0);                              //Creates a Serial w/ Input Pin 2 and Output pin 0
 Adafruit_PM25AQI aqi = Adafruit_PM25AQI();                  //New Instance of Adafruit Tech
+int last[100];
+int sum;
+int index;
 
 int air;                                                    //Value for Air Quality: 0-63
 int filter;                                                 //Value for Filter Quality: 0-63
@@ -16,6 +19,9 @@ int state;                                                  //Value for State of
 
 void setup() {                                              //Function for Setup. Default Call
   lcd.begin(16,2);                                          //Sets up with 16 Colums and 2 Rows
+
+  sum = 0;
+  index = 0;
 
   Serial.begin(9600);                                       // Wait for serial monitor to open at 9600 Baud
   while (!Serial) delay(10);
@@ -25,11 +31,9 @@ void setup() {                                              //Function for Setup
   pmSerial.begin(9600);                                     //Software Serial w/ Baudrate of 9600
 
   if (! aqi.begin_UART(&pmSerial)) {                        // connect to the sensor over software serial 
-    Serial.println("Could not find PM 2.5 sensor!");
     while (1) delay(10);
   }
 
-  Serial.println("PM25 found!");                            //Print when Device Communication is Set Up
   
   air = 13;                                                 //Initial Value for Air Quality
   filter = 44;                                              //Initial Value for Filter Quality
@@ -38,6 +42,14 @@ void setup() {                                              //Function for Setup
   while(1==1) {
     loop();
    }
+
+   PM25_AQI_Data data;                                      //New Datastream
+  
+  if (! aqi.read(&data)) {                                  //Test if AQI Stream is Being Read Properly
+    delay(500);                                             //Try again in 500 Millis (1/2 Second)
+    return;
+  }
+  setupArr(data);                                         //Start Air and Filter Vars
 }
 
 void loop() {                                               //Loop Function, Defualt Call
@@ -47,7 +59,6 @@ void loop() {                                               //Loop Function, Def
   PM25_AQI_Data data;                                       //New Datastream
   
   if (! aqi.read(&data)) {                                  //Test if AQI Stream is Being Read Properly
-    Serial.println("Could not read from AQI");              //When Failed, Print This
     delay(500);                                             //Try again in 500 Millis (1/2 Second)
     return;
   }
@@ -117,6 +128,26 @@ void twoLinePrint(String one, String two) {                 //Function to hellp 
 }
 
 void updateData(PM25_AQI_Data data) {
+  updateArray(data.particles_25um);
   air = 10;
   filter = 10;
+}
+
+void setupArr(PM25_AQI_Data data) {
+  int temp = data.particles_03um;
+  for(index; index < 100; index++) {
+    last[index] = temp;
+    sum += temp;
+  }
+}
+
+void updateArray(int value) {
+  sum -= last[index];
+  last[index] = value;
+
+  if(index == 0) {
+    index=99;
+  } else {
+    index--;
+  }
 }
