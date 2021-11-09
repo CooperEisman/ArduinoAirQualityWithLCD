@@ -39,17 +39,13 @@ void setup() {                                              //Function for Setup
   filter = 44;                                              //Initial Value for Filter Quality
   state = 0;                                                //Initial State
   updateDisplay();                                          //Call Function to Update the Display. Initializes the system.
-  while(1==1) {
-    loop();
-   }
-
+  
    PM25_AQI_Data data;                                      //New Datastream
   
   if (! aqi.read(&data)) {                                  //Test if AQI Stream is Being Read Properly
     delay(500);                                             //Try again in 500 Millis (1/2 Second)
-    return;
   }
-  setupArr(data);                                         //Start Air and Filter Vars
+  setupArr(data);                                           //Start Air and Filter Vars
 }
 
 void loop() {                                               //Loop Function, Defualt Call
@@ -134,7 +130,7 @@ void updateData(PM25_AQI_Data data) {
 }
 
 void setupArr(PM25_AQI_Data data) {
-  int temp = data.particles_03um;
+  int temp = data.particles_10um;
   for(index; index < 100; index++) {
     last[index] = temp;
     sum += temp;
@@ -150,4 +146,6 @@ void updateArray(int value) {
   } else {
     index--;
   }
+  Serial.println(value);
+  Serial.println((sum/100));
 }
