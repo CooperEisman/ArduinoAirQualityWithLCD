@@ -9,9 +9,9 @@
 LiquidCrystal lcd(3,4,5,6,7,8,9,10,11,12,13);               // Params: (rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7)
 SoftwareSerial pmSerial(2, 0);                              //Creates a Serial w/ Input Pin 2 and Output pin 0
 Adafruit_PM25AQI aqi = Adafruit_PM25AQI();                  //New Instance of Adafruit Tech
-int last[100];
-int sum;
-int index;
+int last[100];                                              //Array for Past Values of AQI
+int sum;                                                    //Sum of Value
+int index;                                                  //Current Index. Goes 99->0, then starts at 99 again
 
 int air;                                                    //Value for Air Quality: 0-63
 int filter;                                                 //Value for Filter Quality: 0-63
@@ -31,7 +31,7 @@ void setup() {                                              //Function for Setup
     while (1) delay(10);
   }
 
-  sum = 100;
+  sum = 100;                                                //Sets initial Value of Sum
 
   
   air = 13;                                                 //Initial Value for Air Quality
@@ -124,30 +124,32 @@ void twoLinePrint(String one, String two) {                 //Function to hellp 
 
 void updateData(PM25_AQI_Data data) {
   updateArray(data.particles_25um);
-  air = 10;
-  filter = 10;
+
+  int tempAvg = sum/100;
+  air = 63-(63*tempAvg)/(tempAvg+1);                        //Since x/x+1 has a limit of 1, we can use this to find a scale based on any value of tempAvg
+  filter = 10;                                              //Needs to be Updated
 }
 
-void setupArr() {
+void setupArr() {                                           //Sets up the array with values of index = 1;
   index = 0;
   for(index; index < 100; index++) {
     last[index] = 1;
   }
-  index=99;
+  index=99;                                                 //Initializes the Index
 }
 
-void updateArray(int value) {
-  int temp = sum + value;
+void updateArray(int value) {                               //Updates the array based on most recent value
+  int temp = sum + value;                                   //These Two Lines Update the Sum
   temp = temp - last[index];
 
-  sum = temp;
-  last[index] = value;
+  sum = temp;                                               //Sets sum to calculated temp value
+  last[index] = value;                                      //Updates Array
 
-  if(index == 0) {
+  if(index == 0) {                                          //If index has been iterated through, start again, otherwise, keep going down
     index=99;
   } else {
     index--;
   }
-  Serial.println(value);
+  Serial.println(value);                                    //Print Statements for Testing
   Serial.println(sum/100);
 }
