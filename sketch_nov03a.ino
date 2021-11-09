@@ -125,9 +125,10 @@ void twoLinePrint(String one, String two) {                 //Function to hellp 
 void updateData(PM25_AQI_Data data) {
   updateArray(data.particles_25um);
 
-  int tempAvg = sum/100;
+  double tempAvg = sum/100;
   air = 63-(63*tempAvg)/(tempAvg+1);                        //Since x/x+1 has a limit of 1, we can use this to find a scale based on any value of tempAvg
-  filter = 10;                                              //Needs to be Updated
+  double tempDelta = tempAvg - data.particles_25um;
+  filter = 63-(63*tempDelta)/(tempDelta+1);                 //Since x/x+1 has a limit of 1, we can use this to find a scale based on any value of tempDelta
 }
 
 void setupArr() {                                           //Sets up the array with values of index = 1;
@@ -150,6 +151,4 @@ void updateArray(int value) {                               //Updates the array 
   } else {
     index--;
   }
-  Serial.println(value);                                    //Print Statements for Testing
-  Serial.println(sum/100);
 }
