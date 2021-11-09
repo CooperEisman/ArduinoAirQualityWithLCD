@@ -20,9 +20,6 @@ int state;                                                  //Value for State of
 void setup() {                                              //Function for Setup. Default Call
   lcd.begin(16,2);                                          //Sets up with 16 Colums and 2 Rows
 
-  sum = 0;
-  index = 0;
-
   Serial.begin(9600);                                       // Wait for serial monitor to open at 9600 Baud
   while (!Serial) delay(10);
 
@@ -33,6 +30,8 @@ void setup() {                                              //Function for Setup
   if (! aqi.begin_UART(&pmSerial)) {                        // connect to the sensor over software serial 
     while (1) delay(10);
   }
+
+  sum = 100;
 
   
   air = 13;                                                 //Initial Value for Air Quality
@@ -45,7 +44,7 @@ void setup() {                                              //Function for Setup
   if (! aqi.read(&data)) {                                  //Test if AQI Stream is Being Read Properly
     delay(500);                                             //Try again in 500 Millis (1/2 Second)
   }
-  setupArr(data);                                           //Start Air and Filter Vars
+  setupArr();                                               //Start Air and Filter Vars
 }
 
 void loop() {                                               //Loop Function, Defualt Call
@@ -129,16 +128,19 @@ void updateData(PM25_AQI_Data data) {
   filter = 10;
 }
 
-void setupArr(PM25_AQI_Data data) {
-  int temp = data.particles_10um;
+void setupArr() {
+  index = 0;
   for(index; index < 100; index++) {
-    last[index] = temp;
-    sum += temp;
+    last[index] = 1;
   }
+  index=99;
 }
 
 void updateArray(int value) {
-  sum -= last[index];
+  int temp = sum + value;
+  temp = temp - last[index];
+
+  sum = temp;
   last[index] = value;
 
   if(index == 0) {
@@ -147,5 +149,5 @@ void updateArray(int value) {
     index--;
   }
   Serial.println(value);
-  Serial.println((sum/100));
+  Serial.println(sum/100);
 }
